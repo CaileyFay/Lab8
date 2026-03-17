@@ -1,7 +1,7 @@
 Lab 08 - University of Edinburgh Art Collection
 ================
-Insert your name here
-Insert date here
+Cailey Fay
+3.17.26
 
 ## Load Packages and Data
 

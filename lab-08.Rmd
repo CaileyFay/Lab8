@@ -1,9 +1,13 @@
 ---
 title: "Lab 08 - University of Edinburgh Art Collection"
-author: "Insert your name here"
-date: "Insert date here"
+author: "Cailey Fay"
+date: "3.17.26"
 output: github_document
 ---
+## Getting Started 
+```{r}
+paths_allowed("https://collections.ed.ac.uk/art)")
+```
 
 ## Load Packages and Data  
 
@@ -12,45 +16,70 @@ First, let's load the necessary packages:
 ```{r load-packages, message = FALSE}
 library(tidyverse) 
 library(skimr)
+library(robotstxt)
 ```
 
-Now, load the dataset. If your data isn't ready yet, you can leave `eval = FALSE` for now and update it when needed.  
+## Excercises 1-9: Creating the function and automating 
+```{r}
+source("scripts/01-scrape-page-one.R")
+source("scripts/02-scrape-page-function.R")
+source("scripts/03-scrape-page-many.R")
+```
 
+Now, load the dataset. **when I source above, it includes the dataframe that was created with all of the info, so I will be using that, but this code does work if I were so inclined to use it. 
 
-```{r load-data, message = FALSE, eval = FALSE}
-# Remove eval = FALSE or set it to TRUE once data is ready to be loaded
+```{#r load-data, message = FALSE, eval = TRUE}
 uoe_art <- read_csv("data/uoe-art.csv")
 ```
 
 ## Exercise 10
 
 Let's start working with the **title** column by separating the title and the date:  
-
+The warning is just saying that pieces without the date in the format we are expecting are assigned NAs. 
 ```{r separate-title-date, error = TRUE}
-uoe_art <- uoe_art %>%
+auto <- auto %>%
   separate(title, into = c("title", "date"), sep = "\\(") %>%
   mutate(year = str_remove(date, "\\)") %>% as.numeric()) %>%
-  select(title, artist, year, ___)  # Fill in the missing variable!
+  select(title, artist, year, link)  # Fill in the missing variable!
 ```
 
-Make sure to replace `___` with the appropriate column name.  
-
-
 ## Exercise 11  
-
-*Write your answer here.*  
-
-Feel free to add code chunks as needed. Don't forget to label your code chunk.
-
-
+There are 108 pieces with missing artists and 1574 with missing dates. 
+```{r}
+skim(auto)
+```
 ## Exercise 12  
+There was a painting with year = 2, which I filtered out so that the histogram was more interpretable. Otherwise, it looks like most of the paintings are from 1950 onward. 
+```{r}
+auto %>%
+  filter(year > 2) %>%
+ggplot(mapping = aes(x=year)) +
+  geom_histogram(binwidth = 20)
+```
+
+## Exercise 13 
+Death Mask by H. Dempshall was assigned year = 2. It was actually made in 1964, but in the title, there is a (2) before the (1964). Now it is fixed. 
+```{r}
+auto<- auto %>%
+  mutate(year = case_when(
+    year == 2 ~ 1964,
+    TRUE ~ year
+  ))
+```
+
+## Exercise 14 
+There are 371 unknown artists. After that, the artist with the most pieces is Emma Gillies, with 174. I don't know them. 
+```{r}
+auto %>%
+  count(artist) %>%
+  arrange(desc(n))
+```
+
+## Exercise 15 
+There are 11 pieces with child in the title. The website search says there are 43, but only 11 show up in my frame when I manually search. 
+```{r}
+child <- str_detect(auto$title, "Child")
+table(child)
+```
 
 
-*Continue with the same structure as above.*
-
-You're doing great—keep going! Follow the same format and add your response below.  
-
-
-## Additional Exercises  
-
-Almost there! Keep building on your work and follow the same structure for any remaining exercises. Each exercise builds on the last, so take your time and make sure your code is working as expected.  

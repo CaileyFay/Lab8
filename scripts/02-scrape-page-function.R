@@ -5,23 +5,34 @@ library(rvest)
 
 # function: scrape_page --------------------------------------------------------
 
-___ <- function(url){
-  
+scrape_page <- function(url){
+
   # read page
   page <- read_html(url)
-  
+
   # scrape titles
-  titles <- ___
-  
+  titles <- page %>%
+    html_nodes(".iteminfo") %>%
+    html_node("h3 a") %>%
+    html_text() %>%
+    str_squish()
+
   # scrape links
-  links <- ___
-  
-  # scrape artists 
-  artists <- ___
-  
+  links <- page %>%
+    html_nodes(".iteminfo") %>%
+    html_node("h3 a") %>%
+    html_attr("href") %>%
+    str_replace("\\.", "collections.ed.ac.uk")
+
+  # scrape artists
+  artists <- page %>%
+    html_nodes(".iteminfo") %>%
+    html_node(".artist") %>%
+    html_text()
+
   # create and return tibble
-  tibble(
-    ___
-  )
-  
+ tibble(title = titles,
+         artist = artists,
+         link = links)
+
 }
