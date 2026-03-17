@@ -4,10 +4,6 @@ author: "Cailey Fay"
 date: "3.17.26"
 output: github_document
 ---
-## Getting Started 
-```{r}
-paths_allowed("https://collections.ed.ac.uk/art)")
-```
 
 ## Load Packages and Data  
 
@@ -17,6 +13,11 @@ First, let's load the necessary packages:
 library(tidyverse) 
 library(skimr)
 library(robotstxt)
+```
+
+## Getting Started 
+```{r}
+paths_allowed("https://collections.ed.ac.uk/art)")
 ```
 
 ## Excercises 1-9: Creating the function and automating 
@@ -80,6 +81,9 @@ There are 11 pieces with child in the title. The website search says there are 4
 ```{r}
 child <- str_detect(auto$title, "Child")
 table(child)
+
+#this code shows up false for every piece
+str_detect(auto$title, "child")
 ```
 
 
